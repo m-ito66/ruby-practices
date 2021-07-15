@@ -112,6 +112,4 @@ def no_argument_and_option
   puts
 end
 
-
-
 main
