@@ -33,12 +33,24 @@ def reverse_process
 end
 
 def list_process
+  all_item_blocks
   @sorted_items.each do |sorted_item|
     @item_state = File.stat(sorted_item)
     define_list_variable
-    puts "#{@file_type}#{@file_permission}  #{@link_counts}  #{@owner_name}\
+    one_list = "#{@file_type}#{@file_permission}  #{@link_counts}  #{@owner_name}\
         　#{@group_name}  #{@item_size}  #{@timestamp}  #{sorted_item}"
+    puts one_list
   end
+end
+
+def all_item_blocks
+  @all_item_blocks = 0
+  @sorted_items.each do |sorted_item|
+    @item_state = File.stat(sorted_item)
+    define_list_variable
+    @all_item_blocks += @item_block
+  end
+  puts "total #{@all_item_blocks}"
 end
 
 def define_list_variable
@@ -48,6 +60,7 @@ def define_list_variable
   @owner_name = Etc.getpwuid(@item_state.uid).name
   @group_name = Etc.getgrgid(@item_state.gid).name
   @item_size = @item_state.size
+  @item_block = @item_state.blocks
   timestamp
 end
 
