@@ -75,8 +75,8 @@ end
 def change_permisson(text)
   num = -3
   permission = ''
-  correspondence = { '1' => '--x', '2' => '-w-', '3' => '-wx', '4' => 'r--',
-                     '5' => 'r-x', '6' => 'rw-', '7' => 'rwx' }
+  correspondence = { '0' => '---', '1' => '--x', '2' => '-w-', '3' => '-wx',
+                     '4' => 'r--', '5' => 'r-x', '6' => 'rw-', '7' => 'rwx' }
   while num <= -1
     permission += correspondence[text[num]]
     num += 1
