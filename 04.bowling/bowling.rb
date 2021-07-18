@@ -14,9 +14,8 @@ frames = []
             else
               pins.shift(2)
             end
-  # 最終フレームの処理
-  frames << pins if num == 8
 end
+frames << pins
 
 def strike(frame)
   frame == [10, 0]
