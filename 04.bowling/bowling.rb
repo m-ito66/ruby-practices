@@ -7,49 +7,36 @@ pins = ARGV[0].split(',').map do |pin|
 end
 
 # フレーム毎に配列を分割
-num = 0
-count = 0
-@frames = []
-while num < pins.size
-  # ストライクの処理
-  if pins[num] == 10
-    @frames << [pins[num]]
-    num += 1
-  else
-    @frames << [pins[num], pins[num + 1]]
-    num += 2
-  end
-  count += 1
+frames = []
+9.times do |num|
+  frames << if pins[0] == 10
+              [pins.shift, 0]
+            else
+              pins.shift(2)
+            end
   # 最終フレームの処理
-  if count == 9
-    @frames << pins[num..pins.size]
-    break
-  end
+  frames << pins if num == 8
 end
 
-# ストライクの判定
-def strike(num)
-  @frames[num].size == 1
+def strike(frame)
+  frame == [10, 0]
 end
 
-# スペアの判定
-def spare(num)
-  @frames[num].sum == 10
+def spare(frame)
+  frame.sum == 10
 end
 
-# スコアの計算
 score = 0
-num = 0
-while num < 10
+10.times do |num|
   score +=
-    if strike(num) && strike(num + 1)
-      20 + @frames[num + 2][0]
-    elsif strike(num)
-      10 + @frames[num + 1][0] + @frames[num + 1][1]
-    elsif spare(num)
-      10 + @frames[num + 1][0]
+    if strike(frames[num]) && strike(frames[num + 1])
+      20 + frames[num + 2][0]
+    elsif strike(frames[num])
+      10 + frames[num + 1][0] + frames[num + 1][1]
+    elsif spare(frames[num])
+      10 + frames[num + 1][0]
     else
-      @frames[num].sum
+      frames[num].sum
     end
   num += 1
 end
