@@ -84,13 +84,11 @@ end
 
 def no_list_process(items)
   element_counts = (items.count / 3.0).ceil
-  num = 0
-  while num < element_counts
+  (0..element_counts - 1).each do |num|
     line1_file = items[num]
     line2_file = items[num + element_counts]
     line3_file = items[num + element_counts * 2]
     express_3lines(line1_file, line2_file, line3_file)
-    num += 1
   end
 end
 
