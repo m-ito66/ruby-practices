@@ -6,15 +6,15 @@ require 'optparse'
 require 'date'
 
 def main
-  reverse_flag = list_flag = 0
+  reverse_flag = list_flag = false
   OptionParser.new do |opt|
     items, hidden_items = recieve_items
     opt.on('-a') { items += hidden_items }
-    opt.on('-r') { reverse_flag = 1 }
-    opt.on('-l') { list_flag = 1 }
+    opt.on('-r') { reverse_flag = true }
+    opt.on('-l') { list_flag = true }
     opt.parse!(ARGV)
-    sorted_items = reverse_flag == 1 ? items.sort.reverse : items.sort
-    list_flag == 1 ? list_process(sorted_items) : no_list_process(sorted_items)
+    sorted_items = reverse_flag ? items.sort.reverse : items.sort
+    list_flag ? list_process(sorted_items) : no_list_process(sorted_items)
   end
 end
 
