@@ -9,7 +9,6 @@ def main
   reverse_flag = list_flag = 0
   OptionParser.new do |opt|
     items, hidden_items = recieve_items
-    opt.on {}
     opt.on('-a') { items += hidden_items }
     opt.on('-r') { reverse_flag = 1 }
     opt.on('-l') { list_flag = 1 }
@@ -29,23 +28,19 @@ def recieve_items
 end
 
 def list_process(items)
-  all_item_blocks(items)
+  list_stats = []
+  all_block = 0
   items.each do |item|
     item_state = File.stat(item)
-    list_variables = define_list_variable(item_state)
-    list_variables.each { |variable| print variable }
-    puts " #{item}"
+    all_block += item_state.blocks
+    list_stats << "#{define_list_variable(item_state)} #{item}"
   end
+  print_list(all_block, list_stats)
 end
 
-def all_item_blocks(items)
-  all_item_blocks = 0
-  items.each do |item|
-    item_state = File.stat(item)
-    item_block = item_state.blocks
-    all_item_blocks += item_block
-  end
-  puts "total #{all_item_blocks}"
+def print_list(block, items)
+  puts "total #{block}"
+  items.each { |item| puts item }
 end
 
 def define_list_variable(item_state)
@@ -56,8 +51,7 @@ def define_list_variable(item_state)
   group_name = Etc.getgrgid(item_state.gid).name
   item_size = item_state.size
   time = timestamp(item_state)
-  [file_type, file_permission, format(link_counts, 3), format(owner_name, 6),
-   format(group_name, 7), format(item_size, 7), time]
+  "#{file_type}#{file_permission}#{format(link_counts, 3)}#{format(owner_name, 6)}#{format(group_name, 7)}#{format(item_size, 6)}#{time}"
 end
 
 def timestamp(item_state)
