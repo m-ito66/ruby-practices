@@ -4,112 +4,60 @@
 require 'optparse'
 
 def main
-  if ARGV[0] == '-l'
-    optparse
-    if ARGV.size.zero?
-      # -lオプションを指定されたのみ。標準入力へ
-      text = readlines
-      puts text.size.to_s.rjust(8)
-    else
-      # ARGV内はファイル情報だけ。lines情報を取り出す
-      receive_file_info
-      print_list
-      write_total_lines
-    end
-  elsif ARGV.size.zero?
-    # オプションが指定されていない時
-    no_argument_and_option
-  # オプション、引数ともに指定なしなので、標準入力へ
+  l_flag = 0
+  OptionParser.new do |opt|
+    opt.on('-l') { l_flag = 1 }
+    opt.parse!(ARGV)
+  end
+  if ARGV.empty?
+    no_argument_process(l_flag)
   else
-    # オプションの指定はなし、引数は存在するので、ARGVからファイル情報取得へ
-    receive_file_info
-    write_file_info
-    write_total_info
+    file_info, total_info = receive_file_info
+    file_info.each { |file| write_file_info(file, l_flag) }
+    write_file_info(total_info, l_flag) if ARGV.size >= 2
   end
 end
 
-def optparse
-  OptionParser.new do |opt|
-    opt.on('-l') {}
-    opt.parse!(ARGV)
+def no_argument_process(l_flag)
+  text = readlines
+  total_line_count = total_word_count = total_bytesize = 0
+  text.each do |sentence|
+    total_line_count += 1
+    total_word_count += sentence.split.size
+    total_bytesize += sentence.bytesize
   end
+  total_text_info = [total_line_count, total_word_count, total_bytesize]
+  write_file_info(total_text_info, l_flag)
 end
 
 def receive_file_info
-  num = 0
-  @total_lines = @total_words = @total_size = 0
-  @each_file_info = []
-  while num < ARGV.size
-    word_counts = 0
-    file = File.new(ARGV[num])
-    lines = []
-    # 各行の情報を取得
-    file.each do |line|
-      array_words = line.split(/\s/).delete_if { |word| word == '' }
-      word_counts += array_words.size
-      lines << line
-    end
-    line_counts = /\n$/.match?(lines.last) ? lines.count : lines.count - 1
-    file_name = " #{ARGV[num]}"
-    @each_file_info << [line_counts, word_counts, file.size, file_name]
-    num += 1
-    @total_lines += line_counts
-    @total_words += word_counts
-    @total_size += file.size
+  total_line_count = total_word_count = total_file_size = 0
+  each_file_info = []
+  ARGV.each do |file_name|
+    file_text = File.read(file_name)
+    line_count = file_text.lines.size
+    word_count = file_text.split.size
+    file_size = file_text.size
+    each_file_info << [line_count, word_count, file_size, " #{file_name}"]
+    total_line_count += line_count
+    total_word_count += word_count
+    total_file_size += file_size
   end
+  total_file_info = [total_line_count, total_word_count, total_file_size, ' total']
+  [each_file_info, total_file_info]
 end
 
-def print_list
-  @each_file_info.each do |file|
-    print file[0].to_s.rjust(8)
-    puts file[3]
+LINE_COUNT_INDEX = 0
+WORD_COUNT_INDEX = 1
+FILE_SIZE_INDEX = 2
+FILE_NAME_INDEX = 3
+def write_file_info(file, l_option = 0)
+  print file[LINE_COUNT_INDEX].to_s.rjust(8)
+  unless l_option == 1
+    print file[WORD_COUNT_INDEX].to_s.rjust(8)
+    print file[FILE_SIZE_INDEX].to_s.rjust(8)
   end
-end
-
-def write_file_info
-  @each_file_info.each do |file|
-    print file[0].to_s.rjust(8)
-    print file[1].to_s.rjust(8)
-    print file[2].to_s.rjust(8)
-    puts file[3]
-  end
-end
-
-def write_total_elements
-  print @total_lines.to_s.rjust(8)
-  print @total_words.to_s.rjust(8)
-  print @total_size.to_s.rjust(8)
-end
-
-def write_total_lines
-  return unless ARGV.size >= 2
-
-  print @total_lines.to_s.rjust(8)
-  puts ' total'
-end
-
-def write_total_info
-  return unless ARGV.size >= 2
-
-  write_total_elements
-  puts ' total'
-end
-
-def no_argument_and_option
-  text = readlines
-  text_stat = []
-  text.each do |sentence|
-    word_arrays = sentence.split(/\s/).delete_if { |word| word == '' }
-    text_stat << [word_arrays.size, sentence.bytesize]
-  end
-  @total_lines = @total_words = @total_size = 0
-  text_stat.each do |word|
-    @total_words += word[0]
-    @total_size += word[1]
-  end
-  @total_lines = text_stat.size
-  write_total_elements
-  puts
+  puts file[FILE_NAME_INDEX] || ''
 end
 
 main
