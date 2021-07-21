@@ -6,25 +6,25 @@ require 'optparse'
 require 'date'
 
 def main
-  reverse_flag = list_flag = false
+  a_flag = r_flag = l_flag = false
   OptionParser.new do |opt|
-    items, hidden_items = read_items
-    opt.on('-a') { items += hidden_items }
-    opt.on('-r') { reverse_flag = true }
-    opt.on('-l') { list_flag = true }
+    opt.on('-a') { a_flag = true }
+    opt.on('-r') { r_flag = true }
+    opt.on('-l') { l_flag = true }
     opt.parse!(ARGV)
-    sorted_items = reverse_flag ? items.sort.reverse : items.sort
-    list_flag ? line_item_info(sorted_items) : list_only_name(sorted_items)
+    items = read_items(a_flag, r_flag)
+    l_flag ? line_item_info(items) : list_only_name(items, 3)
   end
 end
 
-def read_items
+def read_items(a_flag, r_flag)
   items = []
   hidden_items = []
   Dir.foreach('.') do |item|
     item[0] == '.' ? hidden_items << item : items << item
   end
-  [items, hidden_items]
+  items = a_flag ? (items + hidden_items).sort : items.sort
+  items = r_flag ? items.sort.reverse : items
 end
 
 def line_item_info(items)
@@ -84,19 +84,14 @@ def change_permisson(text)
   permission
 end
 
-def list_only_name(items)
-  row_count = (items.count / 3.0).ceil
-  (0..row_count - 1).each do |num|
-    files = [items[num], items[num + row_count], items[num + row_count * 2]]
-    print_rows(files)
+def list_only_name(items, row)
+  row_count = (items.count / row.to_f).ceil
+  row_count.times do |num|
+    items.each_slice(row_count) do |item|
+      print item[num] ? item[num].ljust(30) : ''
+    end
+    puts
   end
-end
-
-def print_rows(files)
-  files.each do |file|
-    print file ? file.ljust(30) : ''
-  end
-  puts
 end
 
 main
