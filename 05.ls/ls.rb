@@ -28,13 +28,13 @@ def read_items(a_flag, r_flag)
 end
 
 def line_item_info(items)
-  list_stats = []
   all_block = 0
-  items.each do |item|
-    item_state = File.stat(item)
-    all_block += item_state.blocks
-    list_stats << "#{define_list_variable(item_state)} #{item}"
-  end
+  list_stats =
+    items.map do |item|
+      item_state = File.stat(item)
+      all_block += item_state.blocks
+      "#{define_list_variable(item_state)} #{item}"
+    end
   print_list(all_block, list_stats)
 end
 
