@@ -68,10 +68,18 @@ end
 
 def change_permisson(text)
   permission = ''
-  correspondence = { '0' => '---', '1' => '--x', '2' => '-w-', '3' => '-wx',
-                     '4' => 'r--', '5' => 'r-x', '6' => 'rw-', '7' => 'rwx' }
+  correspondence_table = {
+    '0' => '---',
+    '1' => '--x',
+    '2' => '-w-',
+    '3' => '-wx',
+    '4' => 'r--',
+    '5' => 'r-x',
+    '6' => 'rw-',
+    '7' => 'rwx'
+  }
   (-3..-1).each do |num|
-    permission += correspondence[text[num]]
+    permission += correspondence_table[text[num]]
   end
   permission
 end
