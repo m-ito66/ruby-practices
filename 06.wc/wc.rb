@@ -10,13 +10,24 @@ def main
     opt.parse!(ARGV)
   end
   if ARGV.empty?
-    total_text_info = input_to_terminal
+    total_text_info = change_to_hash(input_to_terminal)
     write_file_info(total_text_info, l_flag)
   else
-    file_info, total_info = receive_file_info
-    file_info.each { |file| write_file_info(file, l_flag) }
+    file_names = ARGV
+    file_info_list, total_info = read_file_info(file_names)
+    total_info = change_to_hash(total_info)
+    file_info_list.each do |file|
+      file = change_to_hash(file)
+      write_file_info(file, l_flag)
+    end
     write_file_info(total_info, l_flag) if ARGV.size >= 2
   end
+end
+
+def change_to_hash(array)
+  key = %i[line_count word_count bytesize name]
+  ary = [key, array].transpose
+  Hash[*ary.flatten]
 end
 
 def input_to_terminal
@@ -27,37 +38,32 @@ def input_to_terminal
     total_word_count += sentence.split.size
     total_bytesize += sentence.bytesize
   end
-  [total_line_count, total_word_count, total_bytesize]
+  [total_line_count, total_word_count, total_bytesize, nil]
 end
 
-def receive_file_info
+def read_file_info(file_names)
   total_line_count = total_word_count = total_file_size = 0
-  each_file_info = []
-  ARGV.each do |file_name|
+  each_file_info = file_names.map do |file_name|
     file_text = File.read(file_name)
     line_count = file_text.lines.size
     word_count = file_text.split.size
     file_size = file_text.size
-    each_file_info << [line_count, word_count, file_size, " #{file_name}"]
     total_line_count += line_count
     total_word_count += word_count
     total_file_size += file_size
+    [line_count, word_count, file_size, " #{file_name}"]
   end
-  total_file_info = [total_line_count, total_word_count, total_file_size, ' total']
+  total_file_info = [total_line_count, total_word_count, total_file_size, 'total']
   [each_file_info, total_file_info]
 end
 
-LINE_COUNT_INDEX = 0
-WORD_COUNT_INDEX = 1
-FILE_SIZE_INDEX = 2
-FILE_NAME_INDEX = 3
 def write_file_info(file, l_flag)
-  print file[LINE_COUNT_INDEX].to_s.rjust(8)
+  print format(file[:line_count])
   unless l_flag
-    print file[WORD_COUNT_INDEX].to_s.rjust(8)
-    print file[FILE_SIZE_INDEX].to_s.rjust(8)
+    print format(file[:word_count])
+    print format(file[:bytesize])
   end
-  puts file[FILE_NAME_INDEX] || ''
+  puts " #{file[:name]}"
 end
 
 def format(value)
