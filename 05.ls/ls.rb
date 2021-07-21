@@ -8,17 +8,17 @@ require 'date'
 def main
   reverse_flag = list_flag = false
   OptionParser.new do |opt|
-    items, hidden_items = recieve_items
+    items, hidden_items = read_items
     opt.on('-a') { items += hidden_items }
     opt.on('-r') { reverse_flag = true }
     opt.on('-l') { list_flag = true }
     opt.parse!(ARGV)
     sorted_items = reverse_flag ? items.sort.reverse : items.sort
-    list_flag ? list_process(sorted_items) : no_list_process(sorted_items)
+    list_flag ? line_item_info(sorted_items) : list_only_name(sorted_items)
   end
 end
 
-def recieve_items
+def read_items
   items = []
   hidden_items = []
   Dir.foreach('.') do |item|
@@ -27,7 +27,7 @@ def recieve_items
   [items, hidden_items]
 end
 
-def list_process(items)
+def line_item_info(items)
   list_stats = []
   all_block = 0
   items.each do |item|
@@ -76,15 +76,15 @@ def change_permisson(text)
   permission
 end
 
-def no_list_process(items)
-  element_counts = (items.count / 3.0).ceil
-  (0..element_counts - 1).each do |num|
-    files = [items[num], items[num + element_counts], items[num + element_counts * 2]]
-    express_3lines(files)
+def list_only_name(items)
+  row_count = (items.count / 3.0).ceil
+  (0..row_count - 1).each do |num|
+    files = [items[num], items[num + row_count], items[num + row_count * 2]]
+    print_rows(files)
   end
 end
 
-def express_3lines(files)
+def print_rows(files)
   files.each do |file|
     print file ? file.ljust(30) : ''
   end
