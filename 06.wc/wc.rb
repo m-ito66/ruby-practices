@@ -4,9 +4,9 @@
 require 'optparse'
 
 def main
-  l_flag = 0
+  l_flag = false
   OptionParser.new do |opt|
-    opt.on('-l') { l_flag = 1 }
+    opt.on('-l') { l_flag = true }
     opt.parse!(ARGV)
   end
   if ARGV.empty?
@@ -51,13 +51,17 @@ LINE_COUNT_INDEX = 0
 WORD_COUNT_INDEX = 1
 FILE_SIZE_INDEX = 2
 FILE_NAME_INDEX = 3
-def write_file_info(file, l_option = 0)
+def write_file_info(file, l_flag)
   print file[LINE_COUNT_INDEX].to_s.rjust(8)
-  unless l_option == 1
+  unless l_flag
     print file[WORD_COUNT_INDEX].to_s.rjust(8)
     print file[FILE_SIZE_INDEX].to_s.rjust(8)
   end
   puts file[FILE_NAME_INDEX] || ''
+end
+
+def format(value)
+  value.to_s.rjust(8)
 end
 
 main
