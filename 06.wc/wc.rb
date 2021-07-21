@@ -10,7 +10,8 @@ def main
     opt.parse!(ARGV)
   end
   if ARGV.empty?
-    no_argument_process(l_flag)
+    total_text_info = input_to_terminal
+    write_file_info(total_text_info, l_flag)
   else
     file_info, total_info = receive_file_info
     file_info.each { |file| write_file_info(file, l_flag) }
@@ -18,7 +19,7 @@ def main
   end
 end
 
-def no_argument_process(l_flag)
+def input_to_terminal
   text = readlines
   total_line_count = total_word_count = total_bytesize = 0
   text.each do |sentence|
@@ -26,8 +27,7 @@ def no_argument_process(l_flag)
     total_word_count += sentence.split.size
     total_bytesize += sentence.bytesize
   end
-  total_text_info = [total_line_count, total_word_count, total_bytesize]
-  write_file_info(total_text_info, l_flag)
+  [total_line_count, total_word_count, total_bytesize]
 end
 
 def receive_file_info
