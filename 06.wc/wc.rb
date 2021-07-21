@@ -15,11 +15,11 @@ def main
   else
     file_names = ARGV
     file_info_list, total_info = read_file_info(file_names)
-    total_info = change_to_hash(total_info)
     file_info_list.each do |file|
       file = change_to_hash(file)
       write_file_info(file, l_flag)
     end
+    total_info = change_to_hash(total_info)
     write_file_info(total_info, l_flag) if ARGV.size >= 2
   end
 end
@@ -31,30 +31,33 @@ def change_to_hash(array)
 end
 
 def input_to_terminal
-  text = readlines
-  total_line_count = total_word_count = total_bytesize = 0
-  text.each do |sentence|
-    total_line_count += 1
-    total_word_count += sentence.split.size
-    total_bytesize += sentence.bytesize
-  end
-  [total_line_count, total_word_count, total_bytesize, nil]
+  stdin_text = readlines
+  line_count, word_count, bytesize = read_each_file(stdin_text)
+  [line_count, word_count, bytesize, nil]
 end
 
 def read_file_info(file_names)
   total_line_count = total_word_count = total_file_size = 0
   each_file_info = file_names.map do |file_name|
-    file_text = File.read(file_name)
-    line_count = file_text.lines.size
-    word_count = file_text.split.size
-    file_size = file_text.size
+    file_text = File.read(file_name).lines
+    line_count, word_count, bytesize = read_each_file(file_text)
     total_line_count += line_count
     total_word_count += word_count
-    total_file_size += file_size
-    [line_count, word_count, file_size, " #{file_name}"]
+    total_file_size += bytesize
+    [line_count, word_count, bytesize, file_name]
   end
   total_file_info = [total_line_count, total_word_count, total_file_size, 'total']
   [each_file_info, total_file_info]
+end
+
+def read_each_file(file)
+  line_count = word_count = bytesize = 0
+  file.each do |sentence|
+    line_count += 1
+    word_count += sentence.split.size
+    bytesize += sentence.bytesize
+  end
+  [line_count, word_count, bytesize]
 end
 
 def write_file_info(file, l_flag)
