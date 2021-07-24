@@ -84,9 +84,9 @@ def change_permisson(text)
   permission
 end
 
-def list_only_name(items, row)
-  row_count = (items.count / row.to_f).ceil
-  row_count.times do |num|
+def list_only_name(items, column)
+  row_count = (items.count / column.to_f).ceil
+  row_count.times do |column|
     items.each_slice(row_count) do |item|
       print item[num] ? item[num].ljust(30) : ''
     end
