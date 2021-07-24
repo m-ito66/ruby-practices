@@ -14,13 +14,13 @@ def main
     write_file_info(total_text_info, l_flag)
   else
     file_names = ARGV
-    file_info_list, total_info = read_file_info(file_names)
+    file_info_list, total_info_list = read_file_info(file_names)
     file_info_list.each do |file|
       file = change_to_hash(file)
       write_file_info(file, l_flag)
     end
-    total_info = change_to_hash(total_info)
-    write_file_info(total_info, l_flag) if ARGV.size >= 2
+    total_info_list = change_to_hash(total_info_list)
+    write_file_info(total_info_list, l_flag) if ARGV.size >= 2
   end
 end
 
