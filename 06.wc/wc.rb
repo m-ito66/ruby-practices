@@ -10,7 +10,7 @@ def main
     opt.parse!(ARGV)
   end
   if ARGV.empty?
-    file_info = build_file_info(change_array_to_text(readlines), nil)
+    file_info = build_file_info(readlines.join, nil)
     print_file_info(file_info, l_flag)
   else
     file_names = ARGV
@@ -25,11 +25,11 @@ end
 def build_file_info_list(file_names)
   all_texts = []
   file_info_list = file_names.map do |file_name|
-    file_text = change_array_to_text(File.read(file_name).lines)
+    file_text = File.read(file_name)
     all_texts << file_text
     build_file_info(file_text, file_name)
   end
-  total_text = change_array_to_text(all_texts, "\n")
+  total_text = all_texts.join("\n")
   total_file_info = build_file_info(total_text, 'total')
   [file_info_list, total_file_info]
 end
@@ -50,10 +50,6 @@ def print_file_info(file_info, l_flag)
     print format(file_info[:bytesize])
   end
   puts " #{file_info[:name]}"
-end
-
-def change_array_to_text(ary, str = nil)
-  ary.join(str)
 end
 
 def format(value)
