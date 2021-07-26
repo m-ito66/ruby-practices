@@ -10,7 +10,7 @@ def main
     opt.parse!(ARGV)
   end
   if ARGV.empty?
-    file_info = build_file_info(readlines.join, nil)
+    file_info = build_file_info(readline(nil), nil)
     print_file_info(file_info, l_flag)
   else
     file_names = ARGV
