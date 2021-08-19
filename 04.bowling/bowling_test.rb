@@ -3,7 +3,7 @@ require './game'
 
 class BowlingTest < Minitest::Test
   def test_frame
-    frame = Frame.new(3, 5)
+    frame = Frame.new([3,5])
     assert_equal 8, frame.score
   end
 

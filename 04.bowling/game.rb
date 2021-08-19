@@ -4,6 +4,8 @@ require './frame'
 require 'byebug'
 
 class Game
+  attr_reader :pins
+
   def initialize(pins)
     @pins = pins
   end
@@ -11,31 +13,34 @@ class Game
   def split_frames
     frames = []
     9.times do |num|
-      frames << if @pins[0] == 'X'
-                  Frame.new(@pins.shift)
+      frames << if pins[0] == 'X'
+                  Frame.new(pins.shift(1))
                 else
-                  Frame.new(@pins.shift, @pins.shift)
+                  Frame.new(pins.shift(2))
                 end
     end
-    frames << Frame.new(@pins[0], @pins[1], @pins[2])
+    frames << Frame.new(pins)
   end
 
   def score(frames)
-    score = 0
+    point = 0
     10.times do |num|
-      score +=
-        if frames[num].strike? && frames[num + 1].strike?
-          20 + frames[num + 2].first_shot.score
-        elsif frames[num].strike?
-          10 + frames[num + 1].score
-        elsif frames[num].spare?
-          10 + frames[num + 1].first_shot.score
-        else
-          frames[num].score
-        end
+      point += bonus_score(frames, num)
       num += 1
     end
-    score += frames.last.third_shot.score
+    point += frames.last.third_shot.score
+  end
+
+  def bonus_score(frames, num)
+      if frames[num].strike? && frames[num + 1].strike?
+        20 + frames[num + 2].first_shot.score
+      elsif frames[num].strike?
+        10 + frames[num + 1].score
+      elsif frames[num].spare?
+        10 + frames[num + 1].first_shot.score
+      else
+        frames[num].score
+      end
   end
 end
 
