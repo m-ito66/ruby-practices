@@ -13,7 +13,3 @@ class Shot
     mark.to_i
   end
 end
-
-shot = Shot.new('X')
-shot.mark
-shot.score
