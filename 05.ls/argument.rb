@@ -2,12 +2,12 @@
 
 require 'optparse'
 require 'pathname'
-require 'byebug'
 
-require './file_list'
+require './formatter'
 
 class Argument
   attr_reader :params, :pathname
+
   def initialize
     @params = { long_format: false, reverse: false, dot_match: false }
 
@@ -20,7 +20,3 @@ class Argument
     @pathname = Pathname(path)
   end
 end
-
-arg = Argument.new
-file_list = FileList.new(arg.params, arg.pathname)
-puts file_list.run_ls(arg.params[:long_format], file_list.paths)
