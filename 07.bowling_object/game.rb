@@ -3,8 +3,6 @@
 require './frame'
 
 class Game
-  attr_reader :frames
-
   def initialize(pins)
     @frames =
       (0..9).map do
@@ -18,18 +16,18 @@ class Game
     (0..9).each do |num|
       point += bonus_score(num)
     end
-    point += frames.last.third_shot.score
+    point += @frames.last.third_shot.score
   end
 
   def bonus_score(num)
-    if frames[num].strike? && frames[num + 1].strike?
-      20 + frames[num + 2].first_shot.score
-    elsif frames[num].strike?
-      10 + frames[num + 1].score
-    elsif frames[num].spare?
-      10 + frames[num + 1].first_shot.score
+    if @frames[num].strike? && @frames[num + 1].strike?
+      20 + @frames[num + 2].first_shot.score
+    elsif @frames[num].strike?
+      10 + @frames[num + 1].score
+    elsif @frames[num].spare?
+      10 + @frames[num + 1].first_shot.score
     else
-      frames[num].score
+      @frames[num].score
     end
   end
 end
