@@ -3,7 +3,6 @@
 require './file_list'
 
 class Formatter
-
   def initialize(file_list, params)
     @file_paths = params[:reverse] ? file_list.paths.reverse! : file_list.paths
   end
