@@ -2,7 +2,6 @@
 
 require 'optparse'
 require 'pathname'
-
 require './formatter'
 
 class Argument

@@ -38,4 +38,10 @@ class FileDetail
     digits = mode.to_s(8)[-3..]
     digits.gsub(/./, MODE_TABLE)
   end
+
+  def self.count_block(file_paths)
+    file_paths.sum do |file_path|
+      File::Stat.new(file_path).blocks
+    end
+  end
 end

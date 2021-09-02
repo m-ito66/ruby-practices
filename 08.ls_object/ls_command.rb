@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 require './argument'
+require './long_formatter'
+require './short_formatter'
 
 arg = Argument.new
-file_list = FileList.new(arg.params, arg.pathname)
-formatter = Formatter.new(file_list, arg.params)
-puts arg.params[:long_format] ? formatter.ls_long : formatter.ls_short
+file_paths = FileList.new(arg.params, arg.pathname).paths
+formatter = arg.params[:long_format] ? LongFormatter.new(file_paths) : ShortFormatter.new(file_paths)
+puts formatter.run_ls
