@@ -14,24 +14,44 @@ MODE_TABLE = {
 }.freeze
 
 class FileDetail
-  attr_reader :type_and_mode, :nlink, :user, :group, :size, :mtime, :basename
-
   def initialize(file_path)
-    stat = File::Stat.new(file_path)
-    @type_and_mode = format_type_and_mode(file_path)
-    @nlink = stat.nlink.to_s
-    @user = Etc.getpwuid(stat.uid).name
-    @group = Etc.getgrgid(stat.gid).name
-    @size = stat.size.to_s
-    @mtime = stat.mtime.strftime('%b %e %H:%M')
-    @basename = File.basename(file_path)
+    @file_path = file_path
+    @stat = File::Stat.new(file_path)
   end
 
-  def format_type_and_mode(file_path)
-    pathname = Pathname(file_path)
+  def nlink
+    @stat.nlink.to_s
+  end
+
+  def user
+    Etc.getpwuid(@stat.uid).name
+  end
+
+  def group
+    Etc.getgrgid(@stat.gid).name
+  end
+
+  def size
+    @stat.size.to_s
+  end
+
+  def mtime
+    @stat.mtime.strftime('%b %e %H:%M')
+  end
+
+  def basename
+    File.basename(@file_path)
+  end
+
+  def type_and_mode
+    pathname = Pathname(@file_path)
     type = pathname.directory? ? 'd' : '-'
     mode = format_mode(pathname.stat.mode)
     "#{type}#{mode}"
+  end
+
+  def blocks
+    @stat.blocks
   end
 
   def format_mode(mode)

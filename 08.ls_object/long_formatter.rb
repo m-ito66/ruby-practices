@@ -3,20 +3,20 @@
 require './formatter'
 
 class LongFormatter < Formatter
-  def run_ls
-    total = "total #{FileDetail.count_block(@file_list.paths)}"
-    body = render_format_body
+  def render
+    total = "total #{@file_list.count_block}"
+    body = render_body
     [total, *body].join("\n")
   end
 
-  def render_format_body
+  def render_body
     max_sizes = @file_list.research_max_size
     @file_list.file_details.map do |data|
-      format_row(data, *max_sizes)
+      render_row(data, *max_sizes)
     end
   end
 
-  def format_row(data, max_nlink, max_user, max_group, max_size)
+  def render_row(data, max_nlink, max_user, max_group, max_size)
     [
       data.type_and_mode,
       "  #{data.nlink.rjust(max_nlink)}",
