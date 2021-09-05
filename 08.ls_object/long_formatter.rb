@@ -4,15 +4,14 @@ require './formatter'
 
 class LongFormatter < Formatter
   def run_ls
-    file_details = FileList.collect_details(@file_paths)
-    total = "total #{FileDetail.count_block(@file_paths)}"
-    body = render_long_format_body(file_details)
+    total = "total #{FileDetail.count_block(@file_list.paths)}"
+    body = render_format_body
     [total, *body].join("\n")
   end
 
-  def render_long_format_body(file_details)
-    max_sizes = FileList.research_max_size(file_details)
-    file_details.map do |data|
+  def render_format_body
+    max_sizes = @file_list.research_max_size
+    @file_list.file_details.map do |data|
       format_row(data, *max_sizes)
     end
   end

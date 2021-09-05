@@ -3,7 +3,7 @@
 require './file_list'
 
 class Formatter
-  def initialize(file_paths)
-    @file_paths = file_paths
+  def initialize(file_list)
+    @file_list = file_list
   end
 end

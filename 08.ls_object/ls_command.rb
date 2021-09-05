@@ -5,6 +5,6 @@ require './long_formatter'
 require './short_formatter'
 
 arg = Argument.new
-file_paths = FileList.new(arg.params, arg.pathname).paths
-formatter = arg.params[:long_format] ? LongFormatter.new(file_paths) : ShortFormatter.new(file_paths)
+file_list = FileList.new(arg.params, arg.pathname)
+formatter = arg.params[:long_format] ? LongFormatter.new(file_list) : ShortFormatter.new(file_list)
 puts formatter.run_ls
